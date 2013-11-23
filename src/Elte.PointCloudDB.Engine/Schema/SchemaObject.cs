@@ -4,10 +4,24 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Elte.PointCloudDB.Engine.Schema
+namespace Elte.PointCloudDB.Schema
 {
     public abstract class SchemaObject
     {
-        public string Name { get; set; }
+        private string name;
+
+        public string Name 
+        {
+            get { return name; }
+        }
+
+        public SchemaObject()
+        {
+        }
+
+        public SchemaObject(string name)
+        {
+            this.name = name;
+        }
     }
 }

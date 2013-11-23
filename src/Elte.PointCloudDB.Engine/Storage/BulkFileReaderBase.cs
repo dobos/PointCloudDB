@@ -5,12 +5,12 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 
-namespace Elte.PointCloudDB.Engine.Storage
+namespace Elte.PointCloudDB.Storage
 {
     /// <summary>
     /// Implements base functionality of an operator that can read a tuple stream from an external file.
     /// </summary>
-    private abstract class BulkFileReaderBase : Operators.OperatorBase
+    abstract class BulkFileReaderBase
     {
         private string path;
         private int bufferSize;
@@ -21,6 +21,21 @@ namespace Elte.PointCloudDB.Engine.Storage
         protected Stream Stream
         {
             get { return stream; }
+        }
+
+        public Schema.SchemaObjectCollection<Schema.Column> Columns
+        {
+            get { return columns; }
+        }
+
+        protected BulkFileReaderBase()
+        {
+            InitializeMembers();
+        }
+
+        private void InitializeMembers()
+        {
+            this.columns = new Schema.SchemaObjectCollection<Schema.Column>();
         }
 
         protected void Open()

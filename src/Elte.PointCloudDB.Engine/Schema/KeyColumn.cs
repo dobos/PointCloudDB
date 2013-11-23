@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Elte.PointCloudDB.Engine.Schema
+namespace Elte.PointCloudDB.Schema
 {
     public class KeyColumn : Column
     {
@@ -13,6 +13,12 @@ namespace Elte.PointCloudDB.Engine.Schema
         public SortOrder SortOrder
         {
             get { return sortOrder; }
+        }
+
+        public KeyColumn(string name, DataType dataType, SortOrder sortOrder)
+            :base(name, dataType)
+        {
+            this.sortOrder = sortOrder;
         }
     }
 }

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Elte.PointCloudDB.Engine.Schema
+namespace Elte.PointCloudDB.Schema
 {
     /// <summary>
     /// Represents a database table column.
@@ -16,6 +16,12 @@ namespace Elte.PointCloudDB.Engine.Schema
         public DataType DataType
         {
             get { return dataType; }
+        }
+
+        public Column(string name, DataType dataType)
+            : base(name)
+        {
+            this.dataType = dataType;
         }
     }
 }

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Elte.PointCloudDB.Engine.Schema
+namespace Elte.PointCloudDB.Schema
 {
     /// <summary>
     /// Represents a database server instance. Should run as a singleton.

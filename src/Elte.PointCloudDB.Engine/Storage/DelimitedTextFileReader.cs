@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Elte.PointCloudDB.Engine.Storage
+namespace Elte.PointCloudDB.Storage
 {
-    private class DelimitedTextFileReader : TextFileReaderBase
+    class DelimitedTextFileReader : TextFileReaderBase
     {
     }
 }

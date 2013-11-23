@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Elte.PointCloudDB.Engine.Schema
+namespace Elte.PointCloudDB.Schema
 {
     public static class Constants
     {

@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Elte.PointCloudDB.Engine.Streams
+namespace Elte.PointCloudDB.Streams
 {
-    private abstract class StreamBase
+    abstract class StreamBase
     {
         private Schema.SchemaObjectCollection<Schema.Column> columns;
 

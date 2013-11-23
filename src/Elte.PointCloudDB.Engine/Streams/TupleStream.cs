@@ -7,9 +7,9 @@ using System.CodeDom;
 using System.CodeDom.Compiler;
 
 
-namespace Elte.PointCloudDB.Engine.Streams
+namespace Elte.PointCloudDB.Streams
 {
-    private class TupleStream : StreamBase
+    class TupleStream : StreamBase
     {
 
     }
