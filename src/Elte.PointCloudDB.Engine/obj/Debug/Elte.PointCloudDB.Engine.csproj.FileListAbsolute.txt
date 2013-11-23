@@ -1,0 +1,5 @@
+D:\ELTE\PointCloudDB\src\Elte.PointCloudDB.Engine\bin\Debug\Elte.PointCloudDB.Engine.dll
+D:\ELTE\PointCloudDB\src\Elte.PointCloudDB.Engine\bin\Debug\Elte.PointCloudDB.Engine.pdb
+D:\ELTE\PointCloudDB\src\Elte.PointCloudDB.Engine\obj\Debug\Elte.PointCloudDB.Engine.csprojResolveAssemblyReference.cache
+D:\ELTE\PointCloudDB\src\Elte.PointCloudDB.Engine\obj\Debug\Elte.PointCloudDB.Engine.dll
+D:\ELTE\PointCloudDB\src\Elte.PointCloudDB.Engine\obj\Debug\Elte.PointCloudDB.Engine.pdb
