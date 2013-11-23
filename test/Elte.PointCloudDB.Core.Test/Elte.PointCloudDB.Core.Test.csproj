@@ -54,7 +54,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Elte.PointCloudDB.Engine\Elte.PointCloudDB.Engine.csproj">
+    <ProjectReference Include="..\..\src\Elte.PointCloudDB.Core\Elte.PointCloudDB.Core.csproj">
       <Project>{94094391-e4ee-4498-af4d-09524ff2366c}</Project>
       <Name>Elte.PointCloudDB.Engine</Name>
     </ProjectReference>

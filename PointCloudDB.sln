@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Elte.PointCloudDB.Engine", "src\Elte.PointCloudDB.Engine\Elte.PointCloudDB.Engine.csproj", "{94094391-E4EE-4498-AF4D-09524FF2366C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Elte.PointCloudDB.Core", "src\Elte.PointCloudDB.Core\Elte.PointCloudDB.Core.csproj", "{94094391-E4EE-4498-AF4D-09524FF2366C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Elte.PointCloudDB.Engine.Test", "test\Elte.PointCloudDB.Engine.Test\Elte.PointCloudDB.Engine.Test.csproj", "{3FF10B48-9FEB-4CC1-A942-1B706F3F9D9A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Elte.PointCloudDB.Core.Test", "test\Elte.PointCloudDB.Core.Test\Elte.PointCloudDB.Core.Test.csproj", "{3FF10B48-9FEB-4CC1-A942-1B706F3F9D9A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
