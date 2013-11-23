@@ -100,6 +100,14 @@ namespace Elte.PointCloudDB.Schema
             list.Add(item.Value);
         }
 
+        public void AddRange(IEnumerable<T> values)
+        {
+            foreach (var v in values)
+            {
+                Add(v);
+            }
+        }
+
         public void Insert(int index, T item)
         {
             dict.Add(item.Name, item);

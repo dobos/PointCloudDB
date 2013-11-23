@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.CodeDom;
 using System.CodeDom.Compiler;
+using System.Reflection;
+using Elte.PointCloudDB.Schema;
 
 namespace Elte.PointCloudDB.CodeGen
 {
@@ -21,7 +24,7 @@ namespace Elte.PointCloudDB.CodeGen
             instance = new TupleFactory();
         }
 
-        private ConcurrentDictionary<string, Type> tupleStructCache;
+        private ConcurrentDictionary<string, ITupleHelper> tupleHelperCache;
 
         private TupleFactory()
         {
@@ -30,47 +33,54 @@ namespace Elte.PointCloudDB.CodeGen
 
         private void InitializeMembers()
         {
-            tupleStructCache = new ConcurrentDictionary<string, Type>(); 
+            tupleHelperCache = new ConcurrentDictionary<string, ITupleHelper>();
         }
 
-        public Type GetTupleStuctType(Schema.Column[] columns)
+        public ITupleHelper GetTupleHelper(SchemaObjectCollection<Column> columns)
         {
-            Type type;
             var name = GetTupleName(columns);
 
-            if (!tupleStructCache.TryGetValue(name, out type))
+            ITupleHelper helper;
+
+            if (!tupleHelperCache.TryGetValue(name, out helper))
             {
-                type = GenerateTupleStruct(name, columns);
-                tupleStructCache.TryAdd(name, type);
+                helper = CreateTupleHelper(name, columns);
+                tupleHelperCache.TryAdd(name, helper);
             }
 
-            return type;
+            return helper;
         }
 
+        public Type GetTupleStuctType(SchemaObjectCollection<Column> columns)
+        {
+            return GetTupleHelper(columns).GetTupleType();
+        }
+
+        private ITupleHelper CreateTupleHelper(string name, SchemaObjectCollection<Column> columns)
+        {
+            var tupleType = CreateTupleStruct(name, columns);
+            var helperType = typeof(TupleHelper<>).MakeGenericType(tupleType);
+
+            // Instantiate helper class
+            var helper = (ITupleHelper)Activator.CreateInstance(helperType);
+
+            // Initialize columns
+            helper.SetColumns(columns);
+            for (int i = 0; i < columns.Count; i++)
+            {
+                helper.SetParseColumnValueDelegate(i, CreateColumnParserDelegate(tupleType, i));
+            }
+
+            return helper;
+        }
 
         /// <summary>
-        /// Generate tuple name from column types.
+        /// Generates code that implements the tuple columns as a struct
         /// </summary>
+        /// <param name="name"></param>
         /// <param name="columns"></param>
         /// <returns></returns>
-        private string GetTupleName(Schema.Column[] columns)
-        {
-            var name = "__tuple";
-
-            for (int i = 0; i < columns.Length; i++)
-            {
-                name += "_" + columns[i].DataType.ID;
-            }
-
-            return name;
-        }
-
-        private CodeNamespace GetGeneratedNamespace()
-        {
-            return new CodeNamespace(typeof(Server).Namespace + ".Generated");
-        }
-
-        private Type GenerateTupleStruct(string name, Schema.Column[] columns)
+        private Type CreateTupleStruct(string name, SchemaObjectCollection<Column> columns)
         {
             var unit = new CodeCompileUnit();
 
@@ -86,7 +96,7 @@ namespace Elte.PointCloudDB.CodeGen
             };
             ns.Types.Add(st);
 
-            for (int i = 0; i < columns.Length; i++)
+            for (int i = 0; i < columns.Count; i++)
             {
                 var fl = new CodeMemberField()
                 {
@@ -110,6 +120,52 @@ namespace Elte.PointCloudDB.CodeGen
             var res = provider.CompileAssemblyFromDom(par, unit);
 
             return res.CompiledAssembly.GetType(ns.Name + "." + name);
+        }
+
+        /// <summary>
+        /// Creates a function that parses a string into a column value
+        /// </summary>
+        /// <param name="tupleType"></param>
+        /// <param name="i"></param>
+        /// <returns></returns>
+        private Delegate CreateColumnParserDelegate(Type tupleType, int i)
+        {
+            // First create the function parameters
+            var data = Expression.Parameter(tupleType.MakeByRefType());
+            var value = Expression.Parameter(typeof(string));
+
+            // Column parser code
+            var fields = tupleType.GetFields();
+
+            var field = Expression.Field(data, fields[i]);
+            var parser = fields[i].GetType().GetMethod("Parse", BindingFlags.Public | BindingFlags.Static, null, new Type[] { typeof(string) }, null);
+            var parse = Expression.Call(parser, value);
+
+            var lambda = Expression.Lambda(parse, new ParameterExpression[] { data, value });
+
+            return lambda.Compile();
+        }
+
+        /// <summary>
+        /// Generates tuple name from column types.
+        /// </summary>
+        /// <param name="columns"></param>
+        /// <returns></returns>
+        private string GetTupleName(Schema.Column[] columns)
+        {
+            var name = "__tuple";
+
+            for (int i = 0; i < columns.Length; i++)
+            {
+                name += "_" + columns[i].DataType.ID;
+            }
+
+            return name;
+        }
+
+        private CodeNamespace GetGeneratedNamespace()
+        {
+            return new CodeNamespace(typeof(Server).Namespace + ".Generated");
         }
     }
 }
