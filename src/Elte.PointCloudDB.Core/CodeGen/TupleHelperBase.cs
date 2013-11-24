@@ -8,6 +8,9 @@ using Elte.PointCloudDB.Streams;
 
 namespace Elte.PointCloudDB.CodeGen
 {
+    /// <summary>
+    /// Defines the function signatures for a non-type tuple helper class.
+    /// </summary>
     public abstract class TupleHelperBase
     {
         private SchemaObjectCollection<Column> columns;
@@ -33,6 +36,6 @@ namespace Elte.PointCloudDB.CodeGen
 
         public abstract void SetParseColumnValueDelegate(int i, Delegate parser);
 
-        public abstract TupleBlockBase CreateBlock(int blockSize);
+        public abstract TupleChunkBase CreateBlock(int blockSize);
     }
 }

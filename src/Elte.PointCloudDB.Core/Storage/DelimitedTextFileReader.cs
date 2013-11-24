@@ -2,14 +2,17 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.IO;
 using System.Threading.Tasks;
 using Elte.PointCloudDB.Streams;
 
 namespace Elte.PointCloudDB.Storage
 {
-    public class DelimitedTextFileReader : TextFileReaderBase
+    public class DelimitedTextFileReader : BulkFileReaderBase, IDisposable
     {
         private char columnSeparator;
+
+        private StreamReader inputReader;
 
         public char ColumnSeparator
         {
@@ -27,22 +30,53 @@ namespace Elte.PointCloudDB.Storage
             this.columnSeparator = ',';
         }
 
-        public override TupleBlockBase ReadNextBlock()
+        public override void Dispose()
         {
-            TupleBlockBase block = null;
+            Close();
+
+            base.Dispose();
+        }
+
+        public override void Open()
+        {
+            base.Open();
+
+            if (inputReader != null)
+            {
+                throw new InvalidOperationException();
+            }
+
+            inputReader = new StreamReader(InputStream);
+        }
+
+        public override void Close()
+        {
+            if (inputReader != null)
+            {
+                inputReader.Close();
+                inputReader.Dispose();
+                inputReader = null;
+            }
+
+            base.Close();
+        }
+
+        protected override TupleChunkBase OnReadNextChunk()
+        {
+            TupleChunkBase chunk = null;
             var cc = Columns.Count;
 
             while (true)
             {
-                var line = InputReader.ReadLine();
+                var line = inputReader.ReadLine();
 
                 // If end of file reached return block
                 if (line == null) break;
 
                 // Create a new block
-                if (block == null)
+                if (chunk == null)
                 {
-                    block = TupleHelper.CreateBlock(BlockSize);
+                    chunk = TupleHelper.CreateBlock(BlockSize);
                 }
 
                 // Parse current line
@@ -53,13 +87,13 @@ namespace Elte.PointCloudDB.Storage
                 }
 
                 // Append to the block
-                block.AppendTuple(parts);
+                chunk.AppendTuple(parts);
 
                 // If the block is full, return it
-                if (!block.HasSpace) break;
+                if (chunk.IsFull) break;
             }
 
-            return block;
+            return chunk;
         }
     }
 }

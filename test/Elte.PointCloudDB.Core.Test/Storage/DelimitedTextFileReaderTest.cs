@@ -21,7 +21,9 @@ namespace Elte.PointCloudDB.Storage
 
             br.Open();
 
-            var block = br.ReadNextBlock();
+            foreach (var tc in br.ReadChunks())
+            {
+            }
 
             br.Close();
         }

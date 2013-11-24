@@ -7,22 +7,22 @@ using Elte.PointCloudDB.CodeGen;
 
 namespace Elte.PointCloudDB.Streams
 {
-    class TupleBlock<T> : TupleBlockBase
+    class TupleChunk<T> : TupleChunkBase
         where T : struct
     {
         private TupleHelper<T> helper;
         private T[] data;
 
-        public TupleBlock(int blockSize, TupleHelper<T> helper)
-            :base(blockSize)
+        public TupleChunk(int chunkSize, TupleHelper<T> helper)
+            :base(chunkSize)
         {
             this.helper = helper;
-            this.data = new T[blockSize];
+            this.data = new T[chunkSize];
         }
 
         public override void AppendTuple(string[] values)
         {
-            helper.Parse(ref data[ItemCount++], values);
+            helper.Parse(ref data[ChunkPos++], values);
         }
     }
 }

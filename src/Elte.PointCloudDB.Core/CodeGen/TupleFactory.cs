@@ -10,38 +10,78 @@ using Elte.PointCloudDB.Schema;
 
 namespace Elte.PointCloudDB.CodeGen
 {
+    /// <summary>
+    /// Implements logic needed to generate tuple structures at runtime.
+    /// </summary>
+    /// <remarks>
+    /// Strongly types structures and functions are generated at runtime
+    /// for tuples.
+    /// </remarks>
     public sealed class TupleFactory
     {
+        /// <summary>
+        /// Singleton instance of the tuple factory.
+        /// </summary>
         private static readonly TupleFactory instance;
 
+        /// <summary>
+        /// Gets the singleton instance of the tuple factory.
+        /// </summary>
         public static TupleFactory Instance
         {
             get { return instance; }
         }
 
+        /// <summary>
+        /// Initializes static members.
+        /// </summary>
         static TupleFactory()
         {
             instance = new TupleFactory();
         }
 
+        /// <summary>
+        /// Holds a cache of tuple helpers already generated.
+        /// </summary>
         private ConcurrentDictionary<string, TupleHelperBase> tupleHelperCache;
 
+        /// <summary>
+        /// 
+        /// </summary>
         private TupleFactory()
         {
             InitializeMembers();
         }
 
+        /// <summary>
+        /// Initializes private member variables.
+        /// </summary>
         private void InitializeMembers()
         {
             tupleHelperCache = new ConcurrentDictionary<string, TupleHelperBase>();
         }
 
+        /// <summary>
+        /// Gets a tuple helper generated for the column set provided.
+        /// </summary>
+        /// <param name="columns"></param>
+        /// <returns></returns>
+        /// <remarks>
+        /// The tuple is determined by the data types of the column set entirely,
+        /// column names are not used. Helpers and tuple structs can be freely reused
+        /// if column types are identical. This function caches tuple helpers and
+        /// returns them from the cache if they have already been generated, or
+        /// generates them on the fly.
+        /// </remarks>
         public TupleHelperBase GetTupleHelper(SchemaObjectCollection<Column> columns)
         {
+            // Get the unique name of the tuple type
             var name = GetTupleName(columns);
 
             TupleHelperBase helper;
 
+            // See if this type of tuple is already in the cache, if not, generate the helper
+            // and the tuple struct.
             if (!tupleHelperCache.TryGetValue(name, out helper))
             {
                 helper = CreateTupleHelper(name, columns);
@@ -51,20 +91,22 @@ namespace Elte.PointCloudDB.CodeGen
             return helper;
         }
 
-        public Type GetTupleStuctType(SchemaObjectCollection<Column> columns)
-        {
-            return GetTupleHelper(columns).GetTupleType();
-        }
-
+        /// <summary>
+        /// Creates a new tuple struct and a tuple helper class.
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="columns"></param>
+        /// <returns></returns>
         private TupleHelperBase CreateTupleHelper(string name, SchemaObjectCollection<Column> columns)
         {
+            // Create the tuple struct
             var tupleType = CreateTupleStruct(name, columns);
-            var helperType = typeof(TupleHelper<>).MakeGenericType(tupleType);
 
-            // Instantiate helper class
+            // Create generic type fo the tuple helper and intantiate helper class
+            var helperType = typeof(TupleHelper<>).MakeGenericType(tupleType);
             var helper = (TupleHelperBase)Activator.CreateInstance(helperType);
 
-            // Initialize columns
+            // Initialize columns and create column parsers
             helper.SetColumns(columns);
             for (int i = 0; i < columns.Count; i++)
             {
@@ -80,6 +122,11 @@ namespace Elte.PointCloudDB.CodeGen
         /// <param name="name"></param>
         /// <param name="columns"></param>
         /// <returns></returns>
+        /// <remarks>
+        /// The function uses CodeDom classes to assemble a struct that will represent
+        /// a tuple determined by the column set. The struct is compiled at runtime
+        /// and loaded into the current AppDomain.
+        /// </remarks>
         private Type CreateTupleStruct(string name, SchemaObjectCollection<Column> columns)
         {
             var unit = new CodeCompileUnit();
@@ -96,6 +143,7 @@ namespace Elte.PointCloudDB.CodeGen
             };
             ns.Types.Add(st);
 
+            // Generate fields for each column
             for (int i = 0; i < columns.Count; i++)
             {
                 var fl = new CodeMemberField()
@@ -108,6 +156,7 @@ namespace Elte.PointCloudDB.CodeGen
                 st.Members.Add(fl);
             }
 
+            // Create a C# compiler
             var provider = CodeDomProvider.CreateProvider("cs");
             var par = new CompilerParameters()
             {
@@ -117,8 +166,8 @@ namespace Elte.PointCloudDB.CodeGen
 #endif
             };
 
+            // Compile the tuple struct and load the compiled type
             var res = provider.CompileAssemblyFromDom(par, unit);
-
             return res.CompiledAssembly.GetType(ns.Name + "." + name);
         }
 
@@ -169,6 +218,10 @@ namespace Elte.PointCloudDB.CodeGen
             return name;
         }
 
+        /// <summary>
+        /// Returns a namespace for generated code.
+        /// </summary>
+        /// <returns></returns>
         private CodeNamespace GetGeneratedNamespace()
         {
             return new CodeNamespace(typeof(Server).Namespace + ".Generated");

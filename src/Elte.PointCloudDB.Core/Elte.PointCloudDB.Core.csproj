@@ -32,6 +32,10 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Threading.Tasks.Dataflow, Version=4.5.14.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\Microsoft.Tpl.Dataflow.4.5.14\lib\portable-net45+win8\System.Threading.Tasks.Dataflow.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -43,6 +47,8 @@
     <Compile Include="CodeGen\TupleFactory.cs" />
     <Compile Include="CodeGen\TupleHelper.cs" />
     <Compile Include="CodeGen\TupleHelperBase.cs" />
+    <Compile Include="IO\UnbufferedFileFactory.cs" />
+    <Compile Include="Operators\BulkRead.cs" />
     <Compile Include="Operators\OperatorBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Schema\Column.cs" />
@@ -58,17 +64,17 @@
     <Compile Include="Schema\Table.cs" />
     <Compile Include="Server.cs" />
     <Compile Include="Storage\BulkFileReaderBase.cs" />
-    <Compile Include="Storage\BulkReadOperator.cs" />
     <Compile Include="Storage\Constants.cs" />
     <Compile Include="Storage\DelimitedTextFileReader.cs" />
-    <Compile Include="Storage\StoreOperator.cs" />
-    <Compile Include="Storage\TextFileReaderBase.cs" />
-    <Compile Include="Streams\ColumnStream.cs" />
+    <Compile Include="Storage\Enums.cs" />
     <Compile Include="Streams\Constants.cs" />
-    <Compile Include="Streams\StreamBase.cs" />
-    <Compile Include="Streams\TupleBlock.cs" />
-    <Compile Include="Streams\TupleBlockBase.cs" />
-    <Compile Include="Streams\TupleStream.cs" />
+    <Compile Include="Streams\ITupleStreamSource.cs" />
+    <Compile Include="Streams\ITupleStreamTarget.cs" />
+    <Compile Include="Streams\TupleChunk.cs" />
+    <Compile Include="Streams\TupleChunkBase.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

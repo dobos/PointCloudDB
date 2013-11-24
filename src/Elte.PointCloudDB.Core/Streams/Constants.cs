@@ -8,6 +8,6 @@ namespace Elte.PointCloudDB.Streams
 {
     public static class Constants
     {
-        public const int DefaultBlockSize = 0x100000;
+        public const int DefaultChunkSize = 0x100000;
     }
 }

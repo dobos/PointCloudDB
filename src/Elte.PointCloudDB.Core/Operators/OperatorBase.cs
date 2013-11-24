@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Elte.PointCloudDB.Operators
 {
-    abstract class OperatorBase
+    public abstract class OperatorBase
     {
-
-
+        public abstract void Initialize();
+        public abstract void Uninitialize();
     }
 }

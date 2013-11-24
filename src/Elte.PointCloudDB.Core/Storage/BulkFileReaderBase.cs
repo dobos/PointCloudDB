@@ -11,7 +11,7 @@ using Elte.PointCloudDB.Streams;
 namespace Elte.PointCloudDB.Storage
 {
     /// <summary>
-    /// Implements base functionality of an operator that can read a tuple stream from an external file.
+    /// Implements base functionality of reading chunks of tuples from an external file.
     /// </summary>
     public abstract class BulkFileReaderBase : IDisposable
     {
@@ -59,7 +59,7 @@ namespace Elte.PointCloudDB.Storage
         {
             this.path = null;
             this.bufferSize = Constants.DefaultBulkReadBufferSize;
-            this.blockSize = Streams.Constants.DefaultBlockSize;
+            this.blockSize = Streams.Constants.DefaultChunkSize;
             this.columns = new SchemaObjectCollection<Column>();
         }
 
@@ -92,7 +92,24 @@ namespace Elte.PointCloudDB.Storage
             }
         }
 
-        public abstract TupleBlockBase ReadNextBlock();
+        public IEnumerable<TupleChunkBase> ReadChunks()
+        {
+            while (true)
+            {
+                var tc = OnReadNextChunk();
+
+                if (tc == null)
+                {
+                    yield break;
+                }
+                else
+                {
+                    yield return tc;
+                }
+            }
+        }
+
+        protected abstract TupleChunkBase OnReadNextChunk();
 
     }
 }
