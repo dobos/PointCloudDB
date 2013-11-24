@@ -47,7 +47,6 @@
     <Compile Include="CodeGen\TupleFactory.cs" />
     <Compile Include="CodeGen\TupleHelper.cs" />
     <Compile Include="CodeGen\TupleHelperBase.cs" />
-    <Compile Include="IO\UnbufferedFileFactory.cs" />
     <Compile Include="Operators\BulkRead.cs" />
     <Compile Include="Operators\OperatorBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
