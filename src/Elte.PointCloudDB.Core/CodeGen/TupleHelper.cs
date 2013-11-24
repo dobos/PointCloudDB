@@ -4,23 +4,16 @@ using System.Text;
 using System.Reflection;
 using System.Linq.Expressions;
 using Elte.PointCloudDB.Schema;
+using Elte.PointCloudDB.Streams;
 
 namespace Elte.PointCloudDB.CodeGen
 {
-    public class TupleHelper<T> : ITupleHelper
+    public class TupleHelper<T> : TupleHelperBase
         where T : struct
-    {
-        public delegate void ColumnParserDelegate(ref T data, string value);
+    {       
+        private ColumnParserDelegate<T>[] columnParsers;
 
-        private SchemaObjectCollection<Column> columns;
-        private ColumnParserDelegate[] columnParsers;
-
-        public SchemaObjectCollection<Column> Columns
-        {
-            get { return columns; }
-        }
-
-        public ColumnParserDelegate[] ColumnParsers
+        public ColumnParserDelegate<T>[] ColumnParsers
         {
             get { return columnParsers; }
         }
@@ -32,23 +25,35 @@ namespace Elte.PointCloudDB.CodeGen
 
         private void InitializeMembers()
         {
-            this.columns = new SchemaObjectCollection<Column>();
         }
 
-        public Type GetTupleType()
+        public override Type GetTupleType()
         {
             return typeof(T);
         }
 
-        void ITupleHelper.SetColumns(SchemaObjectCollection<Column> columns)
+        public override void SetColumns(SchemaObjectCollection<Column> columns)
         {
-            this.columns.AddRange(columns);
-            this.columnParsers = new ColumnParserDelegate[columns.Count];
+            this.Columns.AddRange(columns);
+            this.columnParsers = new ColumnParserDelegate<T>[columns.Count];
         }
 
-        void ITupleHelper.SetParseColumnValueDelegate(int i, Delegate parser)
+        public override void SetParseColumnValueDelegate(int i, Delegate parser)
         {
-            this.columnParsers[i] = (ColumnParserDelegate)parser;
+            this.columnParsers[i] = (ColumnParserDelegate<T>)parser;
+        }
+
+        public override TupleBlockBase CreateBlock(int blockSize)
+        {
+            return new TupleBlock<T>(blockSize, this);
+        }
+
+        public void Parse(ref T data, string[] values)
+        {
+            for (int i = 0; i < columnParsers.Length; i++)
+            {
+                columnParsers[i](ref data, values[i]);
+            }
         }
     }
 }

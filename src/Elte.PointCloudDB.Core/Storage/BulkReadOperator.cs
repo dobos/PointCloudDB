@@ -6,8 +6,13 @@ using System.Threading.Tasks;
 
 namespace Elte.PointCloudDB.Storage
 {
+    /// <summary>
+    /// 
+    /// </summary>
     class BulkReadOperator : Operators.OperatorBase
     {
-        string[] filenames;
+        private string[] filenames;
+
+
     }
 }

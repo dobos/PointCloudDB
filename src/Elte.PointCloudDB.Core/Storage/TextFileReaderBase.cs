@@ -3,14 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace Elte.PointCloudDB.Storage
 {
-    abstract class TextFileReaderBase : BulkFileReaderBase
+    public abstract class TextFileReaderBase : BulkFileReaderBase, IDisposable
     {
-        protected delegate object ColumnParser(string value);
+        private StreamReader inputReader;
 
-        private ColumnParser[] columnParsers;
+        protected StreamReader InputReader
+        {
+            get { return inputReader; }
+        }
 
         protected TextFileReaderBase()
         {
@@ -19,7 +23,37 @@ namespace Elte.PointCloudDB.Storage
 
         private void InitializeMembers()
         {
-            this.columnParsers = null;
+        }
+
+        public override void Dispose()
+        {
+            Close();
+
+            base.Dispose();
+        }
+
+        public override void Open()
+        {
+            base.Open();
+
+            if (inputReader != null)
+            {
+                throw new InvalidOperationException();
+            }
+
+            inputReader = new StreamReader(InputStream);
+        }
+
+        public override void Close()
+        {
+            if (inputReader != null)
+            {
+                inputReader.Close();
+                inputReader.Dispose();
+                inputReader = null;
+            }
+
+            base.Close();
         }
     }
 }

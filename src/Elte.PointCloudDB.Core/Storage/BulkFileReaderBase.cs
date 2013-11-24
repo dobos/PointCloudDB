@@ -4,26 +4,48 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using Elte.PointCloudDB.CodeGen;
+using Elte.PointCloudDB.Schema;
+using Elte.PointCloudDB.Streams;
 
 namespace Elte.PointCloudDB.Storage
 {
     /// <summary>
     /// Implements base functionality of an operator that can read a tuple stream from an external file.
     /// </summary>
-    abstract class BulkFileReaderBase
+    public abstract class BulkFileReaderBase : IDisposable
     {
         private string path;
         private int bufferSize;
-        private Stream stream;
+        private int blockSize;
+        private Stream inputStream;
+        private TupleHelperBase tupleHelper;
 
-        private Schema.SchemaObjectCollection<Schema.Column> columns;
+        private SchemaObjectCollection<Column> columns;
 
-        protected Stream Stream
+        public string Path
         {
-            get { return stream; }
+            get { return path; }
+            set { path = value; }
         }
 
-        public Schema.SchemaObjectCollection<Schema.Column> Columns
+        public int BlockSize
+        {
+            get { return blockSize; }
+            set { blockSize = value; }
+        }
+
+        protected Stream InputStream
+        {
+            get { return inputStream; }
+        }
+
+        protected TupleHelperBase TupleHelper
+        {
+            get { return tupleHelper; }
+        }
+
+        public SchemaObjectCollection<Column> Columns
         {
             get { return columns; }
         }
@@ -35,19 +57,42 @@ namespace Elte.PointCloudDB.Storage
 
         private void InitializeMembers()
         {
-            this.columns = new Schema.SchemaObjectCollection<Schema.Column>();
+            this.path = null;
+            this.bufferSize = Constants.DefaultBulkReadBufferSize;
+            this.blockSize = Streams.Constants.DefaultBlockSize;
+            this.columns = new SchemaObjectCollection<Column>();
         }
 
-        protected void Open()
+        public virtual void Dispose()
         {
-            stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.None, bufferSize, true);
+            Close();
         }
 
-        protected void Close()
+        public virtual void Open()
         {
-            stream.Close();
-            stream.Dispose();
-            stream = null;
+            if (inputStream != null)
+            {
+                throw new InvalidOperationException();
+            }
+
+            inputStream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.None, bufferSize, true);
+
+            tupleHelper = TupleFactory.Instance.GetTupleHelper(columns);
         }
+
+        public virtual void Close()
+        {
+            tupleHelper = null;
+
+            if (inputStream != null)
+            {
+                inputStream.Close();
+                inputStream.Dispose();
+                inputStream = null;
+            }
+        }
+
+        public abstract TupleBlockBase ReadNextBlock();
+
     }
 }

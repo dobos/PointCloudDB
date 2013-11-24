@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Elte.PointCloudDB.Schema;
 
 namespace Elte.PointCloudDB.CodeGen
 {
@@ -7,9 +8,9 @@ namespace Elte.PointCloudDB.CodeGen
     public class TupleFactoryTest
     {
         [TestMethod]
-        public void GetTupleNameTest()
+        public void GetTupleHelperTest()
         {
-            var columns = new Schema.Column[]
+            var columns = new SchemaObjectCollection<Column>()
             {
                 new Schema.Column("Col1", Schema.DataType.UInt64),
                 new Schema.Column("Col2", Schema.DataType.Single),
@@ -19,7 +20,8 @@ namespace Elte.PointCloudDB.CodeGen
                 new Schema.Column("Col6", Schema.DataType.Int32)
             };
 
-            var t = TupleFactory.Instance.GetTupleStuctType(columns);
+            var helper = TupleFactory.Instance.GetTupleHelper(columns);
+            var t = helper.GetTupleType();
 
             Assert.AreEqual("__tuple_ui8_f4_f4_f4_i8_i4", t.Name);
 

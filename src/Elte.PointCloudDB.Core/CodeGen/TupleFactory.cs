@@ -24,7 +24,7 @@ namespace Elte.PointCloudDB.CodeGen
             instance = new TupleFactory();
         }
 
-        private ConcurrentDictionary<string, ITupleHelper> tupleHelperCache;
+        private ConcurrentDictionary<string, TupleHelperBase> tupleHelperCache;
 
         private TupleFactory()
         {
@@ -33,14 +33,14 @@ namespace Elte.PointCloudDB.CodeGen
 
         private void InitializeMembers()
         {
-            tupleHelperCache = new ConcurrentDictionary<string, ITupleHelper>();
+            tupleHelperCache = new ConcurrentDictionary<string, TupleHelperBase>();
         }
 
-        public ITupleHelper GetTupleHelper(SchemaObjectCollection<Column> columns)
+        public TupleHelperBase GetTupleHelper(SchemaObjectCollection<Column> columns)
         {
             var name = GetTupleName(columns);
 
-            ITupleHelper helper;
+            TupleHelperBase helper;
 
             if (!tupleHelperCache.TryGetValue(name, out helper))
             {
@@ -56,13 +56,13 @@ namespace Elte.PointCloudDB.CodeGen
             return GetTupleHelper(columns).GetTupleType();
         }
 
-        private ITupleHelper CreateTupleHelper(string name, SchemaObjectCollection<Column> columns)
+        private TupleHelperBase CreateTupleHelper(string name, SchemaObjectCollection<Column> columns)
         {
             var tupleType = CreateTupleStruct(name, columns);
             var helperType = typeof(TupleHelper<>).MakeGenericType(tupleType);
 
             // Instantiate helper class
-            var helper = (ITupleHelper)Activator.CreateInstance(helperType);
+            var helper = (TupleHelperBase)Activator.CreateInstance(helperType);
 
             // Initialize columns
             helper.SetColumns(columns);
@@ -130,20 +130,26 @@ namespace Elte.PointCloudDB.CodeGen
         /// <returns></returns>
         private Delegate CreateColumnParserDelegate(Type tupleType, int i)
         {
+            // Delegate type
+            var delegateType = typeof(ColumnParserDelegate<>).MakeGenericType(tupleType);
+
             // First create the function parameters
-            var data = Expression.Parameter(tupleType.MakeByRefType());
-            var value = Expression.Parameter(typeof(string));
+            var data = Expression.Parameter(tupleType.MakeByRefType(), "data");
+            var value = Expression.Parameter(typeof(string), "value");
 
             // Column parser code
             var fields = tupleType.GetFields();
 
             var field = Expression.Field(data, fields[i]);
-            var parser = fields[i].GetType().GetMethod("Parse", BindingFlags.Public | BindingFlags.Static, null, new Type[] { typeof(string) }, null);
+            var parser = fields[i].FieldType.GetMethod("Parse", BindingFlags.Public | BindingFlags.Static, null, new Type[] { typeof(string) }, null);
             var parse = Expression.Call(parser, value);
+            var assign = Expression.Assign(field, parse);
 
-            var lambda = Expression.Lambda(parse, new ParameterExpression[] { data, value });
+            var lambda = Expression.Lambda(delegateType, assign, new ParameterExpression[] { data, value });
 
-            return lambda.Compile();
+            var fn = lambda.Compile();
+
+            return fn;
         }
 
         /// <summary>
@@ -151,11 +157,11 @@ namespace Elte.PointCloudDB.CodeGen
         /// </summary>
         /// <param name="columns"></param>
         /// <returns></returns>
-        private string GetTupleName(Schema.Column[] columns)
+        private string GetTupleName(SchemaObjectCollection<Column> columns)
         {
             var name = "__tuple";
 
-            for (int i = 0; i < columns.Length; i++)
+            for (int i = 0; i < columns.Count; i++)
             {
                 name += "_" + columns[i].DataType.ID;
             }
