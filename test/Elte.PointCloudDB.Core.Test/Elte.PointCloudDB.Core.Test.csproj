@@ -51,8 +51,10 @@
   </Choose>
   <ItemGroup>
     <Compile Include="CodeGen\TupleFactoryTest.cs" />
+    <Compile Include="CodeGen\ColumnFactoryTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Storage\DelimitedTextFileReaderTest.cs" />
+    <Compile Include="Utilities\TupleToColumnsChunkConverterTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\Elte.PointCloudDB.Core\Elte.PointCloudDB.Core.csproj">

@@ -70,13 +70,13 @@ namespace Elte.PointCloudDB.Storage
             {
                 var line = inputReader.ReadLine();
 
-                // If end of file reached return block
+                // If end of file reached return chunk
                 if (line == null) break;
 
-                // Create a new block
+                // Create a new chunk
                 if (chunk == null)
                 {
-                    chunk = TupleHelper.CreateBlock(BlockSize);
+                    chunk = TupleHelper.CreateChunk(ChunkSize);
                 }
 
                 // Parse current line
@@ -86,10 +86,10 @@ namespace Elte.PointCloudDB.Storage
                     throw new Exception();  // TODO
                 }
 
-                // Append to the block
+                // Append to the chunk
                 chunk.AppendTuple(parts);
 
-                // If the block is full, return it
+                // If the chunk is full, return it
                 if (chunk.IsFull) break;
             }
 

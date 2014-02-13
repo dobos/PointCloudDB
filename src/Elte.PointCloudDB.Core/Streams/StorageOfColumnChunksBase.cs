@@ -1,5 +1,4 @@
-﻿using Elte.PointCloudDB.Schema;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Elte.PointCloudDB.Streams
 {
-    public abstract class TupleChunkBase
+    public abstract class StorageOfColumnChunksBase
     {
         int chunkSize;
         int chunkPos;
@@ -28,21 +27,22 @@ namespace Elte.PointCloudDB.Streams
             get { return chunkPos == chunkSize; }
         }
 
-        public Object Data
+        public Object ColumnChunks
         {
             get
             {
-                return GetDataImpl();
+                return GetColumnChunksImpl();
             }
         }
 
-        protected TupleChunkBase(int chunkSize)
+        protected StorageOfColumnChunksBase(int chunkSize)
         {
             this.chunkSize = chunkSize;
             this.chunkPos = 0;
         }
 
-        protected abstract Object GetDataImpl();
-        public abstract void AppendTuple(string[] parts);
+        public abstract void AssignColumnValues(TupleChunkBase tupleChunk);
+
+        protected abstract Object GetColumnChunksImpl();
     }
 }

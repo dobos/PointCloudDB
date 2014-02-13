@@ -18,26 +18,34 @@ namespace Elte.PointCloudDB.Operators
     {
         private BulkFileReaderBase[] readers;
         private TransformManyBlock<BulkFileReaderBase, TupleChunkBase> workerBlock;
+        private int maxDegreeOfParallelism;
 
         public ISourceBlock<TupleChunkBase> SourceBlock
         {
             get { return workerBlock; }
         }
 
-        public BulkRead(BulkFileReaderBase[] readers)
+        public BulkRead(BulkFileReaderBase[] readers, int maxDegreeOfParallelism)
         {
             this.readers = readers;
             this.workerBlock = null;
+            this.maxDegreeOfParallelism = maxDegreeOfParallelism;
         }
 
         public override void Initialize()
         {
-            workerBlock = new TransformManyBlock<BulkFileReaderBase, TupleChunkBase>((Func<BulkFileReaderBase, IEnumerable<TupleChunkBase>>)BulkReadWorker);
+            workerBlock = new TransformManyBlock<BulkFileReaderBase, TupleChunkBase>((Func<BulkFileReaderBase, IEnumerable<TupleChunkBase>>)BulkReadWorker,
+                new ExecutionDataflowBlockOptions() { MaxDegreeOfParallelism = maxDegreeOfParallelism });
         }
 
         public override void Uninitialize()
         {
             workerBlock = null;
+        }
+
+        public void LinkFromWorkerBlockTo(ITargetBlock<TupleChunkBase> targetBlock)
+        {
+            workerBlock.LinkTo(targetBlock);
         }
 
         public void Execute()

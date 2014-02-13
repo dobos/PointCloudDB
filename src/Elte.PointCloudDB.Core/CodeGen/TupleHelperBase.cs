@@ -36,6 +36,6 @@ namespace Elte.PointCloudDB.CodeGen
 
         public abstract void SetParseColumnValueDelegate(int i, Delegate parser);
 
-        public abstract TupleChunkBase CreateBlock(int blockSize);
+        public abstract TupleChunkBase CreateChunk(int chunkSize);
     }
 }

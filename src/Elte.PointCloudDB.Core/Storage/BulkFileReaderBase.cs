@@ -17,7 +17,7 @@ namespace Elte.PointCloudDB.Storage
     {
         private string path;
         private int bufferSize;
-        private int blockSize;
+        private int chunkSize;
         private Stream inputStream;
         private TupleHelperBase tupleHelper;
 
@@ -29,10 +29,10 @@ namespace Elte.PointCloudDB.Storage
             set { path = value; }
         }
 
-        public int BlockSize
+        public int ChunkSize
         {
-            get { return blockSize; }
-            set { blockSize = value; }
+            get { return chunkSize; }
+            set { chunkSize = value; }
         }
 
         protected Stream InputStream
@@ -59,7 +59,7 @@ namespace Elte.PointCloudDB.Storage
         {
             this.path = null;
             this.bufferSize = Constants.DefaultBulkReadBufferSize;
-            this.blockSize = Streams.Constants.DefaultChunkSize;
+            this.chunkSize = Streams.Constants.DefaultChunkSize;
             this.columns = new SchemaObjectCollection<Column>();
         }
 

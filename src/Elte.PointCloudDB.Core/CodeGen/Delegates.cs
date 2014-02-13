@@ -17,4 +17,8 @@ namespace Elte.PointCloudDB.CodeGen
     /// </remarks>
     public delegate void ColumnParserDelegate<T>(ref T data, string value)
         where T : struct;
+
+    public delegate void ColumnValuesAssigner<C, T>(T[] tuples, C columnChunks, int columnIndex)
+        where C : class, new()
+        where T : struct;
 }

@@ -222,7 +222,7 @@ namespace Elte.PointCloudDB.CodeGen
         /// Returns a namespace for generated code.
         /// </summary>
         /// <returns></returns>
-        private CodeNamespace GetGeneratedNamespace()
+        public CodeNamespace GetGeneratedNamespace()
         {
             return new CodeNamespace(typeof(Server).Namespace + ".Generated");
         }

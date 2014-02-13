@@ -77,16 +77,16 @@ namespace Elte.PointCloudDB.CodeGen
         }
 
         /// <summary>
-        /// Creates a tuple block with the given block size.
+        /// Creates a tuple chunk with the given chunk size.
         /// </summary>
-        /// <param name="blockSize"></param>
+        /// <param name="chunkSize"></param>
         /// <returns></returns>
         /// <remarks>
-        /// The tuple block will contain an array of tuple structs.
+        /// The tuple chunk will contain an array of tuple structs.
         /// </remarks>
-        public override TupleChunkBase CreateBlock(int blockSize)
+        public override TupleChunkBase CreateChunk(int chunkSize)
         {
-            return new TupleChunk<T>(blockSize, this);
+            return new TupleChunk<T>(chunkSize, this);
         }
 
         /// <summary>
