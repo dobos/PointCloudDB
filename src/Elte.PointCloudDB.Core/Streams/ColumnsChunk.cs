@@ -26,6 +26,11 @@ namespace Elte.PointCloudDB.Streams
             return data;
         }
 
+        public override void AllocateColumnFields()
+        {
+            helper.Allocate(data, ChunkSize);
+        }
+
         public override void AssignColumnValues(TupleChunkBase tupleChunk)
         {
             helper.Assign((T[])tupleChunk.Data, data, ChunkSize);

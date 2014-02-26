@@ -27,9 +27,11 @@ namespace Elte.PointCloudDB.CodeGen
             this.columns = new SchemaObjectCollection<Column>();
         }
 
-        public abstract Type GetColumnsStructType();
+        public abstract Type GetColumnsClassType();
 
         public abstract void SetColumns(SchemaObjectCollection<Column> columns);
+
+        public abstract void SetColumnAllocatorDelegate(int i, Delegate allocator);
 
         public abstract void SetColumnValuesAssigner(int i, Delegate assigner);
 

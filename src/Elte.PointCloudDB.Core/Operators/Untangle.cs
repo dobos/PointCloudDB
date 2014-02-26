@@ -62,6 +62,7 @@ namespace Elte.PointCloudDB.Operators
             if (columnsChunk == null)
             {
                 columnsChunk = columnHelper.CreateChunk(chunkSize);
+                columnsChunk.AllocateColumnFields();
             }
 
             columnsChunk.AssignColumnValues(tupleChunk);

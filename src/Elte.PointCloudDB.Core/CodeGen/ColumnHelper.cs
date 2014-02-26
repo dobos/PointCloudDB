@@ -12,13 +12,14 @@ namespace Elte.PointCloudDB.CodeGen
         where C : class, new()
         where T : struct
     {
+        private ColumnAllocatorDelegate<C>[] allocators;
         private ColumnValuesAssigner<C, T>[] assigners;
 
         /// <summary>
         /// Returns the type of the storage of columns chunk struct.
         /// </summary>
         /// <returns></returns>
-        public override Type GetColumnsStructType()
+        public override Type GetColumnsClassType()
         {
             return typeof(C);
         }
@@ -30,7 +31,13 @@ namespace Elte.PointCloudDB.CodeGen
         public override void SetColumns(SchemaObjectCollection<Column> columns)
         {
             this.Columns.AddRange(columns);
+            this.allocators = new ColumnAllocatorDelegate<C>[columns.Count];
             this.assigners = new ColumnValuesAssigner<C, T>[columns.Count];
+        }
+
+        public override void SetColumnAllocatorDelegate(int i, Delegate allocator)
+        {
+            this.allocators[i] = (ColumnAllocatorDelegate<C>)allocator;
         }
 
         public override void SetColumnValuesAssigner(int i, Delegate assigner)
@@ -51,11 +58,19 @@ namespace Elte.PointCloudDB.CodeGen
             return new ColumnsChunk<C, T>(chunkSize, this);
         }
 
-        public void Assign(T[] tuples, C columnChunks, int chunkSize)
+        public void Allocate(C data, int chunkSize)
+        {
+            for (int i = 0; i < allocators.Length; i++)
+            {
+                allocators[i](data, chunkSize);
+            }
+        }
+
+        public void Assign(T[] tuples, C data, int chunkSize)
         {
             for (int i = 0; i < assigners.Length; i++)
             {
-                assigners[i](tuples, columnChunks, chunkSize);
+                assigners[i](tuples, data, chunkSize);
             }
         }
     }

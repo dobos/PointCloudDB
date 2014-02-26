@@ -76,7 +76,7 @@ namespace Elte.PointCloudDB.CodeGen
         public TupleHelperBase GetTupleHelper(SchemaObjectCollection<Column> columns)
         {
             // Get the unique name of the tuple type
-            var name = GetTupleName(columns);
+            var name = GetTypeNameBasedOnColumns("__tuple", columns);
 
             TupleHelperBase helper;
 
@@ -199,23 +199,6 @@ namespace Elte.PointCloudDB.CodeGen
             var fn = lambda.Compile();
 
             return fn;
-        }
-
-        /// <summary>
-        /// Generates tuple name from column types.
-        /// </summary>
-        /// <param name="columns"></param>
-        /// <returns></returns>
-        private string GetTupleName(SchemaObjectCollection<Column> columns)
-        {
-            var name = "__tuple";
-
-            for (int i = 0; i < columns.Count; i++)
-            {
-                name += "_" + columns[i].DataType.ID;
-            }
-
-            return name;
         }
     }
 }

@@ -24,9 +24,9 @@ namespace Elte.PointCloudDB.CodeGen
 
             var helper = ColumnFactory.Instance.GetColumnHelper(columns, chunkSize);
 
-            var t = helper.GetColumnsStructType();
+            var t = helper.GetColumnsClassType();
 
-            Assert.AreEqual("__columnChunks_ui8_f4_f4_f4_i8_i4", t.Name);
+            Assert.AreEqual("__columnsChunk_ui8_f4_f4_f4_i8_i4", t.Name);
 
             var fs = t.GetFields();
             Assert.AreEqual(6, fs.Length);

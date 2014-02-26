@@ -27,7 +27,7 @@ namespace Elte.PointCloudDB.Streams
             get { return chunkPos == chunkSize; }
         }
 
-        public Object ColumnChunks
+        public Object Data
         {
             get
             {
@@ -40,6 +40,8 @@ namespace Elte.PointCloudDB.Streams
             this.chunkSize = chunkSize;
             this.chunkPos = 0;
         }
+
+        public abstract void AllocateColumnFields();
 
         public abstract void AssignColumnValues(TupleChunkBase tupleChunk);
 
