@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Elte.PointCloudDB.CodeGen
 {
-    public sealed class ColumnFactory
+    public sealed class ColumnFactory : FactoryBase
     {
         private static readonly ColumnFactory instance;
 
@@ -87,7 +87,7 @@ namespace Elte.PointCloudDB.CodeGen
         {
             var unit = new CodeCompileUnit();
 
-            var ns = TupleFactory.Instance.GetGeneratedNamespace();
+            var ns = GetGeneratedNamespace();
             unit.Namespaces.Add(ns);
             ns.Imports.Add(new CodeNamespaceImport("System"));
 

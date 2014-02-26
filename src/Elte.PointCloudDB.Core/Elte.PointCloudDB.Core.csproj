@@ -47,6 +47,7 @@
     <Compile Include="CodeGen\ColumnHelper.cs" />
     <Compile Include="CodeGen\ColumnHelperBase.cs" />
     <Compile Include="CodeGen\Delegates.cs" />
+    <Compile Include="CodeGen\FactoryBase.cs" />
     <Compile Include="CodeGen\TupleFactory.cs" />
     <Compile Include="CodeGen\TupleHelper.cs" />
     <Compile Include="CodeGen\TupleHelperBase.cs" />
@@ -70,14 +71,13 @@
     <Compile Include="Storage\Constants.cs" />
     <Compile Include="Storage\DelimitedTextFileReader.cs" />
     <Compile Include="Storage\Enums.cs" />
+    <Compile Include="Streams\ColumnsChunk.cs" />
+    <Compile Include="Streams\ColumnsChunkBase.cs" />
     <Compile Include="Streams\Constants.cs" />
     <Compile Include="Streams\ITupleStreamSource.cs" />
     <Compile Include="Streams\ITupleStreamTarget.cs" />
-    <Compile Include="Streams\StorageOfColumnChunks.cs" />
-    <Compile Include="Streams\StorageOfColumnChunksBase.cs" />
     <Compile Include="Streams\TupleChunk.cs" />
     <Compile Include="Streams\TupleChunkBase.cs" />
-    <Compile Include="Utilities\TupleToColumnsChunkConverter.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

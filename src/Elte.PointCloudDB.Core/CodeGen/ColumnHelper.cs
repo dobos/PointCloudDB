@@ -46,9 +46,9 @@ namespace Elte.PointCloudDB.CodeGen
         /// <remarks>
         /// The the storage of columns will contain arrays of columns.
         /// </remarks>
-        public override StorageOfColumnChunksBase CreateChunk(int chunkSize)
+        public override ColumnsChunkBase CreateChunk(int chunkSize)
         {
-            return new StorageOfColumnChunks<C, T>(chunkSize, this);
+            return new ColumnsChunk<C, T>(chunkSize, this);
         }
 
         public void Assign(T[] tuples, C columnChunks, int chunkSize)

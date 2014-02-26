@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Elte.PointCloudDB.Streams
 {
-    public abstract class StorageOfColumnChunksBase
+    public abstract class ColumnsChunkBase
     {
         int chunkSize;
         int chunkPos;
@@ -31,11 +31,11 @@ namespace Elte.PointCloudDB.Streams
         {
             get
             {
-                return GetColumnChunksImpl();
+                return GetDataImpl();
             }
         }
 
-        protected StorageOfColumnChunksBase(int chunkSize)
+        protected ColumnsChunkBase(int chunkSize)
         {
             this.chunkSize = chunkSize;
             this.chunkPos = 0;
@@ -43,6 +43,6 @@ namespace Elte.PointCloudDB.Streams
 
         public abstract void AssignColumnValues(TupleChunkBase tupleChunk);
 
-        protected abstract Object GetColumnChunksImpl();
+        protected abstract Object GetDataImpl();
     }
 }

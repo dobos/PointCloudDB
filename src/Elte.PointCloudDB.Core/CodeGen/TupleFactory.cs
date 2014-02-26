@@ -17,7 +17,7 @@ namespace Elte.PointCloudDB.CodeGen
     /// Strongly types structures and functions are generated at runtime
     /// for tuples.
     /// </remarks>
-    public sealed class TupleFactory
+    public sealed class TupleFactory : FactoryBase
     {
         /// <summary>
         /// Singleton instance of the tuple factory.
@@ -216,15 +216,6 @@ namespace Elte.PointCloudDB.CodeGen
             }
 
             return name;
-        }
-
-        /// <summary>
-        /// Returns a namespace for generated code.
-        /// </summary>
-        /// <returns></returns>
-        public CodeNamespace GetGeneratedNamespace()
-        {
-            return new CodeNamespace(typeof(Server).Namespace + ".Generated");
         }
     }
 }

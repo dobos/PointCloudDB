@@ -33,6 +33,6 @@ namespace Elte.PointCloudDB.CodeGen
 
         public abstract void SetColumnValuesAssigner(int i, Delegate assigner);
 
-        public abstract StorageOfColumnChunksBase CreateChunk(int chunkSize);
+        public abstract ColumnsChunkBase CreateChunk(int chunkSize);
     }
 }
