@@ -148,7 +148,7 @@ namespace Elte.PointCloudDB.CodeGen
             var fields = dataType.GetFields();
 
             var field = Expression.Field(data, fields[columnIndex]);
-            var allocation = Expression.NewArrayBounds(fields[columnIndex].FieldType, chunkSize);
+            var allocation = Expression.NewArrayBounds(fields[columnIndex].FieldType.GetElementType(), chunkSize);
             var body = Expression.Assign(field, allocation);
 
             var lambda = Expression.Lambda(delegateType, body, new ParameterExpression[] { data, chunkSize });
